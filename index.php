@@ -1,5 +1,5 @@
 <?php
-  echo("test");
+  
 ?>
 
 <form method="post" action="">
