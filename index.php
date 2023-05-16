@@ -1,5 +1,10 @@
 <?php
-  
+  $link = mysql_connect('projetcloud-wdl-server.mysql.database.azure.com', 'lmgnzkgwif', '0BV63Q3I6X140DXG$');
+  if (!$link) {
+      die('Could not connect: ' . mysql_error());
+  }
+  echo 'Connected successfully';
+  mysql_close($link);
 ?>
 
 <form method="post" action="">
