@@ -2,7 +2,7 @@
 
 $con = mysqli_init();
 mysqli_ssl_set($con,NULL,NULL, "{path to CA cert}", NULL, NULL);
-mysqli_real_connect($conn, "projetcloud-wdl-server.mysql.database.azure.com", "lmgnzkgwif", "{your_password}", "{your_database}", 3306, MYSQLI_CLIENT_SSL);
+mysqli_real_connect($conn, "projetcloud-wdl-server.mysql.database.azure.com", "lmgnzkgwif", "0BV63Q3I6X140DXG$", "projetcloud-wdl-database", 3306, MYSQLI_CLIENT_SSL);
 
 ?>
 
