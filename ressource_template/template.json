@@ -1,0 +1,1505 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_ProjetCloud_WDL_name": {
+            "defaultValue": "ProjetCloud-WDL",
+            "type": "String"
+        },
+        "serverfarms_ASP_ProjetCloudWDLgroupb3a7_90f2_externalid": {
+            "defaultValue": "/subscriptions/70ea20a0-6ecc-4128-bdb7-ecd2d977dba3/resourceGroups/ProjetCloud-WDL_group-b3a7/providers/Microsoft.Web/serverfarms/ASP-ProjetCloudWDLgroupb3a7-90f2",
+            "type": "String"
+        },
+        "virtualNetworks_ProjetCloud_WDLVnet_externalid": {
+            "defaultValue": "/subscriptions/70ea20a0-6ecc-4128-bdb7-ecd2d977dba3/resourceGroups/ProjetCloud-WDL_group-b3a7/providers/Microsoft.Network/virtualNetworks/ProjetCloud-WDLVnet",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2022-09-01",
+            "name": "[parameters('sites_ProjetCloud_WDL_name')]",
+            "location": "France Central",
+            "kind": "app,linux",
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "projetcloud-wdl.azurewebsites.net",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "projetcloud-wdl.scm.azurewebsites.net",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[parameters('serverfarms_ASP_ProjetCloudWDLgroupb3a7_90f2_externalid')]",
+                "reserved": true,
+                "isXenon": false,
+                "hyperV": false,
+                "vnetRouteAllEnabled": true,
+                "vnetImagePullEnabled": false,
+                "vnetContentShareEnabled": false,
+                "siteConfig": {
+                    "numberOfWorkers": 1,
+                    "linuxFxVersion": "PHP|8.2",
+                    "acrUseManagedIdentityCreds": false,
+                    "alwaysOn": false,
+                    "http20Enabled": false,
+                    "functionAppScaleLimit": 0,
+                    "minimumElasticInstanceCount": 0
+                },
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "clientCertMode": "Required",
+                "hostNamesDisabled": false,
+                "customDomainVerificationId": "9B41C09EB7717B4CBB615A3A4EB05C10AA29C257BB48AD0730CBBBD4A40AEAD1",
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None",
+                "storageAccountRequired": false,
+                "virtualNetworkSubnetId": "[concat(parameters('virtualNetworks_ProjetCloud_WDLVnet_externalid'), concat('/subnets/', parameters('sites_ProjetCloud_WDL_name'), 'AppSubnet'))]",
+                "keyVaultReferenceIdentity": "SystemAssigned"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/ftp')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "allow": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/scm')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "allow": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/web')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "linuxFxVersion": "PHP|8.2",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "httpLoggingEnabled": false,
+                "acrUseManagedIdentityCreds": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$ProjetCloud-WDL",
+                "scmType": "GitHubAction",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "vnetName": "298d3348-564b-43f0-b976-d5b796a2afed_ProjetCloud-WDLAppSubnet",
+                "vnetRouteAllEnabled": true,
+                "vnetPrivatePortsCount": 0,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 2147483647,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 2147483647,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "scmMinTlsVersion": "1.2",
+                "ftpsState": "FtpsOnly",
+                "preWarmedInstanceCount": 0,
+                "elasticWebAppScaleLimit": 0,
+                "functionsRuntimeScaleMonitoringEnabled": false,
+                "minimumElasticInstanceCount": 0,
+                "azureStorageAccounts": {}
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/1f713a4e-3f05-4f31-9492-2a21a1cfdead')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"8190fbf6aa5fb2b3f5625354445d90f93816ea1c\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"LQ-Wylp\",\"slotName\":\"Production\",\"commitMessage\":\"Update index.php\"}",
+                "start_time": "2023-05-16T15:04:26.0991437Z",
+                "end_time": "2023-05-16T15:04:27.618595Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2235befc-3674-4ba7-a555-5b19238e38ff')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"f773df60cc1048adf685ff9e4e80b0469bffbea7\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"GaruXer\",\"slotName\":\"Production\",\"commitMessage\":\"Update index.php\"}",
+                "start_time": "2023-05-21T09:19:14.2231924Z",
+                "end_time": "2023-05-21T09:19:15.8772676Z",
+                "active": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/258a358d-bd66-4627-b79b-15b759318427')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"5191be0d603af811a973a68499b75acbc1cc6eaf\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"GaruXer\",\"slotName\":\"Production\",\"commitMessage\":\"Add or update the Azure App Service build and deployment workflow config\"}",
+                "start_time": "2023-05-16T14:38:24.0253604Z",
+                "end_time": "2023-05-16T14:38:26.0346976Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2d1293d2-15fc-4bb9-85e7-4201ee63c6cb')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"66975b52b528c81e23bcc478ff041d4e9aeaccd0\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"LQ-Wylp\",\"slotName\":\"Production\",\"commitMessage\":\"Update index.php\"}",
+                "start_time": "2023-05-16T15:06:06.6767254Z",
+                "end_time": "2023-05-16T15:06:08.099391Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/484d9685-ebe3-4e22-8fab-50f3a559d328')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"3e2edfb853a5aa9df84f2a9665a5e47188155bdb\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"GaruXer\",\"slotName\":\"Production\",\"commitMessage\":\"Update index.php\"}",
+                "start_time": "2023-05-16T14:55:26.8368234Z",
+                "end_time": "2023-05-16T14:55:28.225765Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/5ae9d6cb-fd74-4915-9fb4-3d6bee9e579c')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"a60cd1eb0f0b7e796bc0e477499cc399e3dac17b\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"LQ-Wylp\",\"slotName\":\"Production\",\"commitMessage\":\"Rename formulaire.php to index.php\"}",
+                "start_time": "2023-05-16T14:42:35.8628613Z",
+                "end_time": "2023-05-16T14:42:37.376354Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/60004897-391c-4b86-a0fe-e46be5749364')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"530dbca83aa5143fd10c655a0afe427623d52ada\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"LQ-Wylp\",\"slotName\":\"Production\",\"commitMessage\":\"Update index.php\"}",
+                "start_time": "2023-05-16T15:10:38.8818763Z",
+                "end_time": "2023-05-16T15:10:40.3532494Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/640f031a-875f-4a4b-bea2-a61e1cdce1cf')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"6c3c6cde5c01d918ce1e479ec8e6a562d59b79eb\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"GaruXer\",\"slotName\":\"Production\",\"commitMessage\":\"Update index.php\"}",
+                "start_time": "2023-05-16T14:53:54.1029894Z",
+                "end_time": "2023-05-16T14:53:55.6163645Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/a82026c6-709f-4f84-9bbf-0fc5d190a0d2')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"037d2cbf7c0c4db0120f9c883e9f9c339d642268\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"LQ-Wylp\",\"slotName\":\"Production\",\"commitMessage\":\"Update index.php\"}",
+                "start_time": "2023-05-16T15:08:40.0966804Z",
+                "end_time": "2023-05-16T15:08:41.5502596Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/ebabf9ae-521d-4967-8847-2d833296ea9f')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"b1bb4add09d999a15fccf2ba7e71473bc032316a\",\"repoName\":\"GaruXer/SimonD-JulianW-QuentinL-Cloud-Computing\",\"actor\":\"GaruXer\",\"slotName\":\"Production\",\"commitMessage\":\"Update index.php\"}",
+                "start_time": "2023-05-16T15:14:49.4628113Z",
+                "end_time": "2023-05-16T15:14:51.0428433Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/', parameters('sites_ProjetCloud_WDL_name'), '.azurewebsites.net')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "siteName": "ProjetCloud-WDL",
+                "hostNameType": "Verified"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-10T14_24_15_5303850')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-10T18_24_16_6424671')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-11T03_24_19_2284411')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-11T11_37_51_0686083')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-11T14_37_51_2242098')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-11T17_37_51_3687353')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-11T23_37_51_7193223')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-12T04_29_38_6598897')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-12T11_29_38_7837805')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-12T14_29_38_8307495')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-12T17_29_38_8905324')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-12T20_29_38_9532545')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-13T01_29_39_8810253')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-13T04_29_39_9207662')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-13T07_29_40_0125596')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-13T10_29_40_0527307')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-13T13_29_40_1075073')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-13T16_29_40_1574459')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-13T19_29_40_2301747')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-14T02_29_40_3702091')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-14T05_29_40_4368347')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-14T08_29_40_4811183')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-14T11_29_40_5597113')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-14T14_29_40_6167557')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-14T17_29_40_6847638')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-14T20_29_40_7657271')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-15T02_29_40_8798712')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-15T05_29_40_9267809')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-15T10_29_41_0218672')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-15T13_29_41_0781734')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-15T18_29_41_2133177')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-16T01_29_41_2773157')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-16T05_29_41_3610640')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-16T09_29_41_4317857')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-16T13_29_41_5255543')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-16T17_29_41_6046106')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-16T21_29_41_6770336')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T01_56_01_8284609')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T05_56_01_7344723')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T09_56_01_6192849')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T12_56_01_5361291')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T13_56_01_5122018')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T14_56_01_4911935')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T15_56_01_4712535')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T16_56_01_4409725')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T17_56_01_4198262')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T18_56_01_3984700')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T19_56_01_3655000')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T20_56_01_3351205')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T21_56_01_3165692')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T22_56_01_2880888')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-17T23_56_01_2747494')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T00_56_01_2345707')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T01_56_01_2156939')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T02_56_01_1914417')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T03_56_01_1753075')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T04_56_01_1500779')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T05_56_01_1231262')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T06_56_01_0987167')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T07_56_01_0697739')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T08_56_01_0409271')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T09_56_01_0263278')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T10_56_00_9934001')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T11_56_00_9632960')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T12_56_00_9455634')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T13_56_00_9132257')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T14_56_00_8814530')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T15_56_00_8563678')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T16_56_00_8284386')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T17_56_00_8100280')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T18_56_00_7766661')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T19_56_00_7437454')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T20_56_00_7230602')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T21_56_00_7309201')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-18T22_56_00_7127978')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T01_20_00_5334153')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T02_20_00_5014033')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T03_20_00_5140011')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T04_20_00_5114016')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T05_20_00_4737754')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T06_20_00_4708620')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T07_20_00_4815394')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T08_20_00_4479911')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T09_20_00_5419823')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T10_20_00_4458801')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T11_20_00_4426344')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T12_20_00_4302904')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T13_20_00_4923818')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T14_20_00_4144725')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T15_20_00_4124738')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T16_20_00_4831276')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T17_46_09_1607650')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T18_46_09_1426220')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T19_46_09_1195147')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T20_46_09_2611913')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T21_46_09_0669659')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T22_46_09_0256371')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-19T23_46_09_0052772')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T00_46_08_9571462')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T01_46_09_0601249')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T02_46_08_9366275')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T03_46_08_9050480')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T04_46_08_8793807')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T05_46_08_8533707')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T06_46_08_8193685')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T07_46_08_8222068')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T08_46_08_7692044')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T09_46_08_7464169')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T10_46_08_7478490')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T11_46_08_7619176')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T12_46_08_6966587')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T13_46_08_6544321')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T14_46_08_6421329')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T15_46_08_5970242')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T16_46_08_5677615')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T17_46_08_5613587')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T18_46_08_5075111')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T19_46_08_4838630')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T20_46_08_4401752')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T21_46_08_4618822')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T22_46_08_4007674')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-20T23_46_08_4904249')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T00_46_08_4760500')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T01_46_08_3136329')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T02_46_08_2510145')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T03_46_08_3816073')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T04_46_08_2136054')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T05_46_08_4277073')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T06_46_08_1977169')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T07_46_08_1352622')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T08_46_08_1075457')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T09_46_08_0863901')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T10_46_08_0885917')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T11_46_08_0920151')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T12_46_08_0547940')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T13_46_08_0565180')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T14_46_07_9918354')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T15_46_08_0212333')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/snapshots",
+            "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/2023-05-21T16_46_07_9728454')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/virtualNetworkConnections",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(parameters('sites_ProjetCloud_WDL_name'), '/298d3348-564b-43f0-b976-d5b796a2afed_', parameters('sites_ProjetCloud_WDL_name'), 'AppSubnet')]",
+            "location": "France Central",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_ProjetCloud_WDL_name'))]"
+            ],
+            "properties": {
+                "vnetResourceId": "[concat(parameters('virtualNetworks_ProjetCloud_WDLVnet_externalid'), '/subnets/ProjetCloud-WDLAppSubnet')]",
+                "isSwift": true
+            }
+        }
+    ]
+}

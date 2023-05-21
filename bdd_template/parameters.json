@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "flexibleServers_projetcloud_wdl_server_name": {
+            "value": null
+        },
+        "virtualNetworks_ProjetCloud_WDLVnet_externalid": {
+            "value": null
+        },
+        "privateDnsZones_privatelink_mysql_database_azure_com_externalid": {
+            "value": null
+        }
+    }
+}

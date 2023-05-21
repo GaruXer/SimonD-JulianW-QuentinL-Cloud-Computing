@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_ProjetCloud_WDL_name": {
+            "value": null
+        },
+        "serverfarms_ASP_ProjetCloudWDLgroupb3a7_90f2_externalid": {
+            "value": null
+        },
+        "virtualNetworks_ProjetCloud_WDLVnet_externalid": {
+            "value": null
+        }
+    }
+}
