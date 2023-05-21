@@ -1,10 +1,13 @@
 <?php
-  $link = mysql_connect('projetcloud-wdl-server.mysql.database.azure.com', 'lmgnzkgwif', '0BV63Q3I6X140DXG$');
-  if (!$link) {
-      die('Could not connect: ' . mysql_error());
-  }
-  echo 'Connected successfully';
-  mysql_close($link);
+  $serverName = "projetcloud-wdl-server.mysql.database.azure.com";
+  $connectionOptions = array(
+      "Database" => "projetcloud-wdl-database",
+      "Uid" => "lmgnzkgwif",
+      "PWD" => "0BV63Q3I6X140DXG$"
+  );
+
+  // establishes the connection
+  $conn = sqlsrv_connect($serverName, $connectionOptions);
 ?>
 
 <form method="post" action="">
